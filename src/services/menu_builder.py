@@ -31,23 +31,19 @@ class MenuBuilder:
     ) -> List[Dict]:
         main_menu = []
         for dish in self.menu_data.dishes:
-            dish_restrictions = [r.value for r in dish.get_restrictions()]
-            print(f" restrições: {dish_restrictions}")
+            dish_restrictions = dish.get_restrictions()
+            dish_ingredients = dish.get_ingredients()
             if (
-                restriction is None
-                or restriction.value not in dish_restrictions
+                restriction is None or restriction not in dish_restrictions
+            ) and all(
+                ingredient in self.inventory.inventory
+                for ingredient in dish_ingredients
             ):
                 dish_info = {
                     "dish_name": dish.name,
-                    "ingredients": sorted(
-                        [
-                            ingredient.name
-                            for ingredient in dish.get_ingredients()
-                        ]
-                    ),
-                    "price": f"R${dish.price:.2f}",
-                    "restrictions": sorted(dish_restrictions),
+                    "ingredients": dish_ingredients,
+                    "price": dish.price,
+                    "restrictions": list(dish_restrictions),
                 }
                 main_menu.append(dish_info)
-                print(f"esse é o dish info {dish_info}")
         return main_menu
